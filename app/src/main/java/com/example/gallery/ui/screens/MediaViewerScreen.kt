@@ -13,6 +13,8 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -35,6 +37,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -234,11 +237,22 @@ private fun ZoomableImage(item: MediaItem, onTap: () -> Unit) {
                 )
             }
             .pointerInput(item.id) {
-                detectDragGestures { change, dragAmount ->
+                awaitEachGesture {
+                    awaitFirstDown()
                     if (scale > 1f) {
-                        change.consume()
-                        offsetX += dragAmount.x
-                        offsetY += dragAmount.y
+                        do {
+                            val event = awaitPointerEvent()
+                            if (event.changes.size == 1) {
+                                event.changes.forEach { change ->
+                                    val dragAmount = change.positionChange()
+                                    if (dragAmount != androidx.compose.ui.geometry.Offset.Zero) {
+                                        offsetX += dragAmount.x
+                                        offsetY += dragAmount.y
+                                        change.consume()
+                                    }
+                                }
+                            }
+                        } while (event.changes.any { it.pressed })
                     }
                 }
             }
@@ -285,6 +299,20 @@ private fun VideoPage(item: MediaItem, isActive: Boolean, onTap: () -> Unit) {
                 }
             },
             modifier = Modifier.fillMaxSize()
+        )
+        
+        // Transparent overlay over the top 75% of the video.
+        // This intercepts touches for Compose (routing them to HorizontalPager for swiping)
+        // while leaving the bottom 25% clear so the user can interact with the ExoPlayer controls (seekbar, etc).
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.75f)
+                .align(Alignment.TopCenter)
+                .background(Color.Transparent)
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = { onTap() })
+                }
         )
     }
 }
