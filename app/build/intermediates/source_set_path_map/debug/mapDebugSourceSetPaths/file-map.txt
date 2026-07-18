@@ -1,0 +1,59 @@
+com.example.gallery.app-runtime-release-0 C:\Users\RahulBodh\.gradle\caches\transforms-4\06c3170746c2eac97a8eec0026d54956\transformed\runtime-release\res
+com.example.gallery.app-foundation-layout-release-1 C:\Users\RahulBodh\.gradle\caches\transforms-4\12587a5d877080ee684bdbc4e928689e\transformed\foundation-layout-release\res
+com.example.gallery.app-emoji2-1.3.0-2 C:\Users\RahulBodh\.gradle\caches\transforms-4\192474c036ec43764acdf6f3e34ae042\transformed\emoji2-1.3.0\res
+com.example.gallery.app-animation-core-release-3 C:\Users\RahulBodh\.gradle\caches\transforms-4\1b0d8044f9d2e9c0921cc90b9886460c\transformed\animation-core-release\res
+com.example.gallery.app-lifecycle-viewmodel-release-4 C:\Users\RahulBodh\.gradle\caches\transforms-4\22a5073bfb88d83f0e88d9cce0cf8790\transformed\lifecycle-viewmodel-release\res
+com.example.gallery.app-lifecycle-viewmodel-savedstate-2.8.4-5 C:\Users\RahulBodh\.gradle\caches\transforms-4\3037873078978c6f3b85bd62d9d713f9\transformed\lifecycle-viewmodel-savedstate-2.8.4\res
+com.example.gallery.app-core-runtime-2.2.0-6 C:\Users\RahulBodh\.gradle\caches\transforms-4\35b3db2516afa50d8f7eeea7a2525269\transformed\core-runtime-2.2.0\res
+com.example.gallery.app-navigation-common-ktx-2.7.7-7 C:\Users\RahulBodh\.gradle\caches\transforms-4\455415d262a970b49fdaa2cd5b7f9794\transformed\navigation-common-ktx-2.7.7\res
+com.example.gallery.app-material-release-8 C:\Users\RahulBodh\.gradle\caches\transforms-4\477e3b6cc6484f0d562d54143bc8c798\transformed\material-release\res
+com.example.gallery.app-lifecycle-runtime-release-9 C:\Users\RahulBodh\.gradle\caches\transforms-4\477f89579cf58d94865ad603b388be09\transformed\lifecycle-runtime-release\res
+com.example.gallery.app-savedstate-ktx-1.2.1-10 C:\Users\RahulBodh\.gradle\caches\transforms-4\4b0189ef96502ad6c8505175b508ab6e\transformed\savedstate-ktx-1.2.1\res
+com.example.gallery.app-savedstate-1.2.1-11 C:\Users\RahulBodh\.gradle\caches\transforms-4\4bd627a9048f6ce18b1b2d88bd05a714\transformed\savedstate-1.2.1\res
+com.example.gallery.app-profileinstaller-1.3.1-12 C:\Users\RahulBodh\.gradle\caches\transforms-4\4e16cc280eaa0a1f5277c41379c36ea2\transformed\profileinstaller-1.3.1\res
+com.example.gallery.app-lifecycle-process-2.8.4-13 C:\Users\RahulBodh\.gradle\caches\transforms-4\5b8ea465910fd80be9fa1407ed6ac524\transformed\lifecycle-process-2.8.4\res
+com.example.gallery.app-foundation-release-14 C:\Users\RahulBodh\.gradle\caches\transforms-4\6882bccadd010629ff0a1ec3880068e4\transformed\foundation-release\res
+com.example.gallery.app-media3-exoplayer-1.4.0-15 C:\Users\RahulBodh\.gradle\caches\transforms-4\68b204e96c97c69f63ad191bcaec132a\transformed\media3-exoplayer-1.4.0\res
+com.example.gallery.app-runtime-saveable-release-16 C:\Users\RahulBodh\.gradle\caches\transforms-4\6bef251489f0fc420fa1f568442a9df9\transformed\runtime-saveable-release\res
+com.example.gallery.app-startup-runtime-1.1.1-17 C:\Users\RahulBodh\.gradle\caches\transforms-4\705c330e03d4e2fcb62a924d14782115\transformed\startup-runtime-1.1.1\res
+com.example.gallery.app-ui-graphics-release-18 C:\Users\RahulBodh\.gradle\caches\transforms-4\72e034cce98fcfc6cac1e844dd70db3b\transformed\ui-graphics-release\res
+com.example.gallery.app-navigation-runtime-ktx-2.7.7-19 C:\Users\RahulBodh\.gradle\caches\transforms-4\73f65e877665775ad0cb66c4fc4f92cb\transformed\navigation-runtime-ktx-2.7.7\res
+com.example.gallery.app-activity-ktx-1.9.1-20 C:\Users\RahulBodh\.gradle\caches\transforms-4\7bf5c3d7cb39f3232f11f4f775b33adb\transformed\activity-ktx-1.9.1\res
+com.example.gallery.app-ui-unit-release-21 C:\Users\RahulBodh\.gradle\caches\transforms-4\7d4d3a9a1b2bf883c4eb0ce077376dd9\transformed\ui-unit-release\res
+com.example.gallery.app-ui-tooling-data-release-22 C:\Users\RahulBodh\.gradle\caches\transforms-4\7d8fed506a384c6ebb4906e8f1b8f9aa\transformed\ui-tooling-data-release\res
+com.example.gallery.app-material-icons-extended-release-23 C:\Users\RahulBodh\.gradle\caches\transforms-4\87ba6c21ac512ce035929bc3ebeb7190\transformed\material-icons-extended-release\res
+com.example.gallery.app-core-1.13.1-24 C:\Users\RahulBodh\.gradle\caches\transforms-4\8e0a0bff2d388b6446750efdf4a5758f\transformed\core-1.13.1\res
+com.example.gallery.app-recyclerview-1.3.0-25 C:\Users\RahulBodh\.gradle\caches\transforms-4\8f0e32556abe4536e3df32e0fc73c8cd\transformed\recyclerview-1.3.0\res
+com.example.gallery.app-ui-tooling-preview-release-26 C:\Users\RahulBodh\.gradle\caches\transforms-4\99c8477ded6f726dc952b5bd2de159c8\transformed\ui-tooling-preview-release\res
+com.example.gallery.app-material-icons-core-release-27 C:\Users\RahulBodh\.gradle\caches\transforms-4\9bc070f20ee3ce1e3a961447045f8a7b\transformed\material-icons-core-release\res
+com.example.gallery.app-ui-release-28 C:\Users\RahulBodh\.gradle\caches\transforms-4\9c09bba0afbdcfa3f9923e85ee633245\transformed\ui-release\res
+com.example.gallery.app-appcompat-resources-1.6.1-29 C:\Users\RahulBodh\.gradle\caches\transforms-4\9f152211f368ddf8b167627d72946a31\transformed\appcompat-resources-1.6.1\res
+com.example.gallery.app-activity-compose-1.9.1-30 C:\Users\RahulBodh\.gradle\caches\transforms-4\a097f81365948968b328f73a08d95852\transformed\activity-compose-1.9.1\res
+com.example.gallery.app-material3-release-31 C:\Users\RahulBodh\.gradle\caches\transforms-4\a46343d596cd2a9dc852dfbe04ee83f3\transformed\material3-release\res
+com.example.gallery.app-lifecycle-livedata-core-2.8.4-32 C:\Users\RahulBodh\.gradle\caches\transforms-4\a5549947074dccd409e1434689964717\transformed\lifecycle-livedata-core-2.8.4\res
+com.example.gallery.app-navigation-runtime-2.7.7-33 C:\Users\RahulBodh\.gradle\caches\transforms-4\af48ec4587d9188f36efaa619fefd270\transformed\navigation-runtime-2.7.7\res
+com.example.gallery.app-media-1.7.0-34 C:\Users\RahulBodh\.gradle\caches\transforms-4\af4a4501f4720d1eb4a0cb4841bced2d\transformed\media-1.7.0\res
+com.example.gallery.app-navigation-common-2.7.7-35 C:\Users\RahulBodh\.gradle\caches\transforms-4\b59e10dfbcad63a2662e480008133d54\transformed\navigation-common-2.7.7\res
+com.example.gallery.app-annotation-experimental-1.4.0-36 C:\Users\RahulBodh\.gradle\caches\transforms-4\b602daaf2448be52ca00da64464dbe99\transformed\annotation-experimental-1.4.0\res
+com.example.gallery.app-material-ripple-release-37 C:\Users\RahulBodh\.gradle\caches\transforms-4\bc9d09d93d63b5366c993189c0c309ea\transformed\material-ripple-release\res
+com.example.gallery.app-ui-util-release-38 C:\Users\RahulBodh\.gradle\caches\transforms-4\c03962454a580ad384d529ce5da6b872\transformed\ui-util-release\res
+com.example.gallery.app-ui-tooling-release-39 C:\Users\RahulBodh\.gradle\caches\transforms-4\c7ff3eb765e975bf618d909127b04946\transformed\ui-tooling-release\res
+com.example.gallery.app-customview-poolingcontainer-1.0.0-40 C:\Users\RahulBodh\.gradle\caches\transforms-4\ca320cc04769201d96ae35a18d4b1c24\transformed\customview-poolingcontainer-1.0.0\res
+com.example.gallery.app-navigation-compose-2.7.7-41 C:\Users\RahulBodh\.gradle\caches\transforms-4\d32c8f88ac40a121f5e071fece63b44b\transformed\navigation-compose-2.7.7\res
+com.example.gallery.app-activity-1.9.1-42 C:\Users\RahulBodh\.gradle\caches\transforms-4\d4eae6239ae40a774437e66bb01639a2\transformed\activity-1.9.1\res
+com.example.gallery.app-lifecycle-viewmodel-ktx-2.8.4-43 C:\Users\RahulBodh\.gradle\caches\transforms-4\dab0fbf711961b4704927be381c4c446\transformed\lifecycle-viewmodel-ktx-2.8.4\res
+com.example.gallery.app-lifecycle-viewmodel-compose-release-44 C:\Users\RahulBodh\.gradle\caches\transforms-4\e1507cf3bd6155e61703e74c97707352\transformed\lifecycle-viewmodel-compose-release\res
+com.example.gallery.app-lifecycle-runtime-ktx-release-45 C:\Users\RahulBodh\.gradle\caches\transforms-4\e27b6b1a1bd2b5854ab6dfbba8491eb1\transformed\lifecycle-runtime-ktx-release\res
+com.example.gallery.app-media3-ui-1.4.0-46 C:\Users\RahulBodh\.gradle\caches\transforms-4\e28c678999c0917b8003b9ff3f22b68c\transformed\media3-ui-1.4.0\res
+com.example.gallery.app-coil-base-2.6.0-47 C:\Users\RahulBodh\.gradle\caches\transforms-4\e826a28626ce96a8ff800fc104562a63\transformed\coil-base-2.6.0\res
+com.example.gallery.app-ui-text-release-48 C:\Users\RahulBodh\.gradle\caches\transforms-4\ec03b51c718d5a16629a2de1565e2710\transformed\ui-text-release\res
+com.example.gallery.app-core-ktx-1.13.1-49 C:\Users\RahulBodh\.gradle\caches\transforms-4\ee0481a11330c26fe06a00831ef0481b\transformed\core-ktx-1.13.1\res
+com.example.gallery.app-ui-geometry-release-50 C:\Users\RahulBodh\.gradle\caches\transforms-4\f513593dc0516cc407bc481c6c67ad12\transformed\ui-geometry-release\res
+com.example.gallery.app-animation-release-51 C:\Users\RahulBodh\.gradle\caches\transforms-4\f9ccb624363d44550effdf918ef6fc77\transformed\animation-release\res
+com.example.gallery.app-pngs-52 D:\My Personal Projects\GalleryApp\app\build\generated\res\pngs\debug
+com.example.gallery.app-resValues-53 D:\My Personal Projects\GalleryApp\app\build\generated\res\resValues\debug
+com.example.gallery.app-packageDebugResources-54 D:\My Personal Projects\GalleryApp\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.example.gallery.app-packageDebugResources-55 D:\My Personal Projects\GalleryApp\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.example.gallery.app-debug-56 D:\My Personal Projects\GalleryApp\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.example.gallery.app-debug-57 D:\My Personal Projects\GalleryApp\app\src\debug\res
+com.example.gallery.app-main-58 D:\My Personal Projects\GalleryApp\app\src\main\res
