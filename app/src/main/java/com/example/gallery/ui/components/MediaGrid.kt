@@ -1,23 +1,41 @@
 package com.example.gallery.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -26,37 +44,82 @@ import coil.request.ImageRequest
 import coil.request.videoFrameMillis
 import com.example.gallery.data.MediaItem
 import com.example.gallery.data.MediaType
+import com.example.gallery.ui.theme.Spacing
 import java.util.concurrent.TimeUnit
 
 @Composable
 fun MediaGrid(
     items: List<MediaItem>,
     modifier: Modifier = Modifier,
-    onItemClick: (Int) -> Unit
+    selectedItems: Set<Int> = emptySet(),
+    isSelectionMode: Boolean = false,
+    onItemClick: (Int) -> Unit,
+    onItemLongClick: (Int) -> Unit = {}
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
+        columns = GridCells.Adaptive(minSize = 110.dp),
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(2.dp)
+        contentPadding = PaddingValues(Spacing.ExtraSmall)
     ) {
-        items(items.size) { index ->
-            MediaThumbnail(item = items[index], onClick = { onItemClick(index) })
+        itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
+            val isSelected = selectedItems.contains(index)
+            MediaThumbnail(
+                item = item,
+                isSelected = isSelected,
+                isSelectionMode = isSelectionMode,
+                onClick = {
+                    if (isSelectionMode) {
+                        onItemLongClick(index)
+                    } else {
+                        onItemClick(index)
+                    }
+                },
+                onLongClick = { onItemLongClick(index) }
+            )
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MediaThumbnail(item: MediaItem, onClick: () -> Unit) {
+fun MediaThumbnail(
+    item: MediaItem,
+    isSelected: Boolean,
+    isSelectionMode: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed || isSelected) 0.90f else 1f,
+        animationSpec = tween(200),
+        label = "scale"
+    )
+
     Box(
         modifier = Modifier
-            .padding(1.dp)
+            .padding(Spacing.ExtraSmall)
             .aspectRatio(1f)
-            .clip(androidx.compose.foundation.shape.RoundedCornerShape(2.dp))
-            .clickable(onClick = onClick)
+            .scale(scale)
+            .clip(RoundedCornerShape(Spacing.Medium))
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .combinedClickable(
+                interactionSource = interactionSource,
+                indication = null, // Custom visual feedback through scale and selection
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
     ) {
         val request = ImageRequest.Builder(androidx.compose.ui.platform.LocalContext.current)
             .data(item.uri)
-            .apply { if (item.type == MediaType.VIDEO) videoFrameMillis(1000) }
+            .apply { 
+                if (item.type == MediaType.VIDEO) {
+                    videoFrameMillis(1000)
+                    decoderFactory(coil.decode.VideoFrameDecoder.Factory())
+                }
+            }
             .crossfade(true)
             .build()
 
@@ -67,25 +130,78 @@ fun MediaThumbnail(item: MediaItem, onClick: () -> Unit) {
             modifier = Modifier.fillMaxSize()
         )
 
+        // Gradient overlay for videos
         if (item.type == MediaType.VIDEO) {
-            Icon(
-                imageVector = Icons.Filled.PlayCircle,
-                contentDescription = "Video",
-                tint = Color.White,
+            Box(
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(4.dp)
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
+                            startY = 100f
+                        )
+                    )
             )
+            
             Text(
                 text = formatDuration(item.duration),
                 color = Color.White,
-                style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(4.dp)
-                    .background(Color.Black.copy(alpha = 0.6f))
-                    .padding(horizontal = 4.dp, vertical = 1.dp)
+                    .padding(Spacing.Small)
             )
+            
+            Icon(
+                imageVector = Icons.Filled.PlayCircle,
+                contentDescription = "Video",
+                tint = Color.White.copy(alpha = 0.8f),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(32.dp)
+            )
+        }
+
+        // Selection overlay and checkmark
+        AnimatedVisibility(
+            visible = isSelected || isSelectionMode,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.3f) 
+                        else Color.Black.copy(alpha = 0.1f)
+                    )
+            ) {
+                if (isSelected) {
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = "Selected",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(Spacing.Small)
+                            .background(Color.White, CircleShape)
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(Spacing.Small)
+                            .size(24.dp)
+                            .background(Color.Transparent, CircleShape)
+                            .border(
+                                2.dp, 
+                                Color.White.copy(alpha = 0.8f), 
+                                CircleShape
+                            )
+                    )
+                }
+            }
         }
     }
 }

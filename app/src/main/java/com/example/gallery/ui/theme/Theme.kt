@@ -15,15 +15,25 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColors = darkColorScheme(
-    primary = GalleryAccent,
-    background = GalleryBlack,
-    surface = GallerySurface,
-    onBackground = GalleryOnDark,
-    onSurface = GalleryOnDark
+    primary = DarkPrimary,
+    onPrimary = DarkOnPrimary,
+    background = DarkBackground,
+    onBackground = DarkOnBackground,
+    surface = DarkSurface,
+    onSurface = DarkOnBackground,
+    surfaceContainer = DarkSurfaceContainer,
+    onSurfaceVariant = DarkOnSurfaceVariant
 )
 
 private val LightColors = lightColorScheme(
-    primary = GalleryAccent
+    primary = LightPrimary,
+    onPrimary = LightOnPrimary,
+    background = LightBackground,
+    onBackground = LightOnBackground,
+    surface = LightSurface,
+    onSurface = LightOnBackground,
+    surfaceContainer = LightSurfaceContainer,
+    onSurfaceVariant = LightOnSurfaceVariant
 )
 
 @Composable

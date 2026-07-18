@@ -6,39 +6,29 @@ import android.text.format.Formatter
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.IntentSenderRequest
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -52,6 +42,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.example.gallery.data.MediaItem
 import com.example.gallery.data.MediaType
+import com.example.gallery.ui.theme.Spacing
 import com.example.gallery.viewmodel.GalleryViewModel
 import kotlin.math.max
 import kotlin.math.min
@@ -97,7 +88,7 @@ fun MediaViewerScreen(
         if (result.resultCode == android.app.Activity.RESULT_OK) onBack()
     }
 
-    androidx.compose.runtime.LaunchedEffect(state.pendingDeleteIntentSender) {
+    LaunchedEffect(state.pendingDeleteIntentSender) {
         state.pendingDeleteIntentSender?.let { sender ->
             deleteLauncher.launch(IntentSenderRequest.Builder(sender).build())
         }
@@ -110,31 +101,60 @@ fun MediaViewerScreen(
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
             val item = mediaList[page]
             if (item.type == MediaType.VIDEO) {
-                VideoPage(item = item, isActive = page == pagerState.currentPage)
+                VideoPage(item = item, isActive = page == pagerState.currentPage, onTap = { showControls = !showControls })
             } else {
                 ZoomableImage(item = item, onTap = { showControls = !showControls })
             }
         }
 
-        if (showControls) {
-            TopAppBar(
-                title = { Text(currentItem.displayName, maxLines = 1) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black.copy(alpha = 0.5f)),
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
+        // Top Gradient & AppBar
+        AnimatedVisibility(
+            visible = showControls,
+            enter = fadeIn() + slideInVertically(initialOffsetY = { -it }),
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { -it }),
+            modifier = Modifier.align(Alignment.TopCenter)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Black.copy(alpha = 0.6f), Color.Transparent)
+                        )
+                    )
+            ) {
+                TopAppBar(
+                    title = { },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    )
+                )
+            }
+        }
 
+        // Bottom Gradient & Actions
+        AnimatedVisibility(
+            visible = showControls,
+            enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
             Row(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .background(Color.Black.copy(alpha = 0.5f))
-                    .padding(vertical = 8.dp, horizontal = 24.dp),
-                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceEvenly
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f))
+                        )
+                    )
+                    .padding(vertical = Spacing.Large, horizontal = Spacing.ExtraLarge)
+                    .windowInsetsPadding(WindowInsets.navigationBars),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 IconButton(onClick = { shareItem(context, currentItem) }) {
                     Icon(Icons.Filled.Share, contentDescription = "Share", tint = Color.White)
@@ -152,8 +172,9 @@ fun MediaViewerScreen(
     itemAwaitingConfirm?.let { item ->
         AlertDialog(
             onDismissRequest = { itemAwaitingConfirm = null },
-            title = { Text("Delete item?") },
-            text = { Text("This will permanently delete \"${item.displayName}\".") },
+            icon = { Icon(Icons.Filled.Delete, contentDescription = null) },
+            title = { Text("Delete Media") },
+            text = { Text("Are you sure you want to permanently delete \"${item.displayName}\"?") },
             confirmButton = {
                 TextButton(onClick = {
                     itemAwaitingConfirm = null
@@ -162,7 +183,8 @@ fun MediaViewerScreen(
             },
             dismissButton = {
                 TextButton(onClick = { itemAwaitingConfirm = null }) { Text("Cancel") }
-            }
+            },
+            shape = RoundedCornerShape(Spacing.Large)
         )
     }
 
@@ -184,6 +206,16 @@ private fun ZoomableImage(item: MediaItem, onTap: () -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .pointerInput(item.id) {
+                detectTapGestures(
+                    onTap = { onTap() },
+                    onDoubleTap = {
+                        scale = if (scale > 1f) 1f else 2.5f
+                        offsetX = 0f
+                        offsetY = 0f
+                    }
+                )
+            }
+            .pointerInput(item.id) {
                 detectTransformGestures { _, pan, zoom, _ ->
                     scale = max(1f, min(scale * zoom, 5f))
                     offsetX = if (scale == 1f) 0f else offsetX + pan.x
@@ -200,7 +232,7 @@ private fun ZoomableImage(item: MediaItem, onTap: () -> Unit) {
 }
 
 @Composable
-private fun VideoPage(item: MediaItem, isActive: Boolean) {
+private fun VideoPage(item: MediaItem, isActive: Boolean, onTap: () -> Unit) {
     val context = LocalContext.current
     val exoPlayer = remember(item.id) {
         ExoPlayer.Builder(context).build().apply {
@@ -213,19 +245,27 @@ private fun VideoPage(item: MediaItem, isActive: Boolean) {
         onDispose { exoPlayer.release() }
     }
 
-    androidx.compose.runtime.LaunchedEffect(isActive) {
+    LaunchedEffect(isActive) {
         if (isActive) exoPlayer.playWhenReady = true else exoPlayer.pause()
     }
 
-    AndroidView(
-        factory = {
-            PlayerView(it).apply {
-                player = exoPlayer
-                useController = true
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(item.id) {
+                detectTapGestures(onTap = { onTap() })
             }
-        },
-        modifier = Modifier.fillMaxSize()
-    )
+    ) {
+        AndroidView(
+            factory = {
+                PlayerView(it).apply {
+                    player = exoPlayer
+                    useController = true
+                }
+            },
+            modifier = Modifier.fillMaxSize()
+        )
+    }
 }
 
 @Composable
@@ -239,9 +279,10 @@ private fun MediaInfoDialog(item: MediaItem, onDismiss: () -> Unit) {
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        icon = { Icon(Icons.Filled.Info, contentDescription = null) },
         title = { Text("Details") },
         text = {
-            Column {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.Small)) {
                 InfoRow("Name", item.displayName)
                 InfoRow("Date", dateText)
                 InfoRow("Size", sizeText)
@@ -255,15 +296,28 @@ private fun MediaInfoDialog(item: MediaItem, onDismiss: () -> Unit) {
         },
         confirmButton = {
             TextButton(onClick = onDismiss) { Text("Close") }
-        }
+        },
+        shape = RoundedCornerShape(Spacing.Large)
     )
 }
 
 @Composable
 private fun InfoRow(label: String, value: String) {
-    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
-        Text(text = "$label: ", fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
-        Text(text = value)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1
+        )
     }
 }
 
