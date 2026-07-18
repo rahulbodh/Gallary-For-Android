@@ -13,8 +13,11 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -195,9 +198,20 @@ fun MediaViewerScreen(
 
 @Composable
 private fun ZoomableImage(item: MediaItem, onTap: () -> Unit) {
-    var scale by remember(item.id) { mutableStateOf(1f) }
-    var offsetX by remember(item.id) { mutableStateOf(0f) }
-    var offsetY by remember(item.id) { mutableStateOf(0f) }
+    var scale by remember(item.id) { mutableFloatStateOf(1f) }
+    var offsetX by remember(item.id) { mutableFloatStateOf(0f) }
+    var offsetY by remember(item.id) { mutableFloatStateOf(0f) }
+
+    val transformableState = rememberTransformableState { zoomChange, panChange, _ ->
+        scale = max(1f, min(scale * zoomChange, 5f))
+        if (scale > 1f) {
+            offsetX += panChange.x
+            offsetY += panChange.y
+        } else {
+            offsetX = 0f
+            offsetY = 0f
+        }
+    }
 
     AsyncImage(
         model = item.uri,
@@ -209,19 +223,26 @@ private fun ZoomableImage(item: MediaItem, onTap: () -> Unit) {
                 detectTapGestures(
                     onTap = { onTap() },
                     onDoubleTap = {
-                        scale = if (scale > 1f) 1f else 2.5f
-                        offsetX = 0f
-                        offsetY = 0f
+                        if (scale > 1f) {
+                            scale = 1f
+                            offsetX = 0f
+                            offsetY = 0f
+                        } else {
+                            scale = 2.5f
+                        }
                     }
                 )
             }
             .pointerInput(item.id) {
-                detectTransformGestures { _, pan, zoom, _ ->
-                    scale = max(1f, min(scale * zoom, 5f))
-                    offsetX = if (scale == 1f) 0f else offsetX + pan.x
-                    offsetY = if (scale == 1f) 0f else offsetY + pan.y
+                detectDragGestures { change, dragAmount ->
+                    if (scale > 1f) {
+                        change.consume()
+                        offsetX += dragAmount.x
+                        offsetY += dragAmount.y
+                    }
                 }
             }
+            .transformable(state = transformableState)
             .graphicsLayer(
                 scaleX = scale,
                 scaleY = scale,

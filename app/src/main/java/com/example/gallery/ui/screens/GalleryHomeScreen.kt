@@ -9,9 +9,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
@@ -35,10 +38,12 @@ import androidx.compose.ui.unit.dp
 import com.example.gallery.ui.components.MediaGrid
 import com.example.gallery.ui.components.PermissionGate
 import com.example.gallery.ui.theme.Spacing
+import com.example.gallery.data.MediaType
+import kotlinx.coroutines.launch
 import com.example.gallery.viewmodel.GalleryTab
 import com.example.gallery.viewmodel.GalleryViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun GalleryHomeScreen(
     viewModel: GalleryViewModel,
@@ -103,6 +108,31 @@ fun GalleryHomeScreen(
                     .fillMaxSize()
                     .padding(padding)
             ) {
+                val tabs = GalleryTab.values().toList()
+                val pagerState = rememberPagerState(
+                    initialPage = tabs.indexOf(state.selectedTab)
+                ) { tabs.size }
+                val coroutineScope = rememberCoroutineScope()
+
+                // Pre-compute filtered lists when allMedia changes, not during pager scroll
+                val mediaMap = remember(state.allMedia) {
+                    mapOf(
+                        GalleryTab.ALL to state.allMedia,
+                        GalleryTab.PHOTOS to state.allMedia.filter { it.type == MediaType.IMAGE && !it.isScreenshot },
+                        GalleryTab.VIDEOS to state.allMedia.filter { it.type == MediaType.VIDEO },
+                        GalleryTab.SCREENSHOTS to state.allMedia.filter { it.isScreenshot }
+                    )
+                }
+
+                // Sync pager changes to ViewModel safely
+                LaunchedEffect(pagerState.currentPage) {
+                    val currentTab = tabs[pagerState.currentPage]
+                    if (state.selectedTab != currentTab) {
+                        viewModel.selectTab(currentTab)
+                        selectedItems = emptySet()
+                    }
+                }
+
                 // Animated Segmented Tabs
                 AnimatedVisibility(
                     visible = !isSelectionMode,
@@ -110,49 +140,45 @@ fun GalleryHomeScreen(
                     exit = shrinkVertically() + fadeOut()
                 ) {
                     SegmentedTabs(
-                        tabs = GalleryTab.values().toList(),
-                        selectedTab = state.selectedTab,
-                        onTabSelected = { 
-                            viewModel.selectTab(it)
+                        tabs = tabs,
+                        selectedTab = tabs[pagerState.targetPage], // Visually updates instantly on swipe
+                        onTabSelected = { tab ->
                             selectedItems = emptySet()
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(tabs.indexOf(tab))
+                            }
                         },
                         modifier = Modifier.padding(horizontal = Spacing.Large, vertical = Spacing.Small)
                     )
                 }
 
-                Box(modifier = Modifier.fillMaxSize().weight(1f)) {
-                    AnimatedContent(
-                        targetState = state,
-                        label = "GalleryContent",
-                        transitionSpec = {
-                            fadeIn(tween(300)) togetherWith fadeOut(tween(300))
-                        }
-                    ) { targetState ->
-                        when {
-                            targetState.isLoading -> {
-                                LoadingState()
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize().weight(1f)
+                ) { page ->
+                    val currentTab = tabs[page]
+                    val pageMedia = mediaMap[currentTab] ?: emptyList()
+
+                    if (state.isLoading) {
+                        LoadingState()
+                    } else if (pageMedia.isEmpty()) {
+                        EmptyState()
+                    } else {
+                        MediaGrid(
+                            items = pageMedia,
+                            selectedItems = selectedItems,
+                            isSelectionMode = isSelectionMode,
+                            onItemClick = { index ->
+                                onOpenItem(currentTab.name.lowercase(), index)
+                            },
+                            onItemLongClick = { index ->
+                                selectedItems = if (selectedItems.contains(index)) {
+                                    selectedItems - index
+                                } else {
+                                    selectedItems + index
+                                }
                             }
-                            targetState.filteredMedia.isEmpty() -> {
-                                EmptyState()
-                            }
-                            else -> {
-                                MediaGrid(
-                                    items = targetState.filteredMedia,
-                                    selectedItems = selectedItems,
-                                    isSelectionMode = isSelectionMode,
-                                    onItemClick = { index ->
-                                        onOpenItem(targetState.selectedTab.name.lowercase(), index)
-                                    },
-                                    onItemLongClick = { index ->
-                                        selectedItems = if (selectedItems.contains(index)) {
-                                            selectedItems - index
-                                        } else {
-                                            selectedItems + index
-                                        }
-                                    }
-                                )
-                            }
-                        }
+                        )
                     }
                 }
             }
